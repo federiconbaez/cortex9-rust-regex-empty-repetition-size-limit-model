@@ -1,4 +1,5 @@
 {
+ "cases": 11,
  "hir_patterns": 24,
  "hir_mismatches": 0,
  "compile_checks": 16,

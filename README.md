@@ -93,6 +93,11 @@ needs cargo, not run in CI):
   `(?:|){4294967295}` → `CompiledTooBig` on **1.5.4** at both limits.
 - **Skipped on 1.5.4:** the 6 cases where the model reports `MODEL_LIMIT`.
   Those are the long loops the CVE describes.
+- **Coverage is enforced:** every tool row must echo its input (pattern,
+  and the size limit for compile runs), row counts must equal input counts,
+  statuses must be known, and 16 compiled + 6 skipped must equal 2 × 11
+  cases. An empty, truncated, extra or wrong output raises `UpstreamError`
+  and writes nothing (`tests/test_upstream_check.py`, fake tools, no cargo).
 - **Not checked:** only the status is compared, not instruction counts.
 
 ## Usage

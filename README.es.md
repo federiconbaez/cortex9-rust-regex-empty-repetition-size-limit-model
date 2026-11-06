@@ -42,6 +42,11 @@ caracteres. Ver [LIMITATIONS.md](LIMITATIONS.md).
   - El estado de `RegexBuilder::size_limit(..).build()` en regex 1.5.4/1.5.5
     reales coincide en 16/16. Se omiten en 1.5.4 los 6 casos `MODEL_LIMIT`,
     y no se comparan los recuentos de instrucciones.
+  - La cobertura se exige: cada fila debe repetir su entrada (patrón y
+    límite), el número de filas debe igualar el de entradas, el estado debe
+    ser conocido y 16 compilados + 6 omitidos deben sumar 2 × 11 casos. Una
+    salida vacía, truncada, sobrante o errónea lanza `UpstreamError` y no
+    escribe nada (`tests/test_upstream_check.py`).
 
 ## Uso
 
