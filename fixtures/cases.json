@@ -1,5 +1,5 @@
 {
- "_note": "Expectations derived by hand from compile.rs (pre = b92ffd5, fix = ae70b41) with size_of::<Inst>() = 32, before running the model. Fields not listed are not asserted.",
+ "_note": "Expectations derived by hand from compile.rs (pre = b92ffd5, fix = ae70b41) with size_of::<Inst>() = 32. Exception: for 03 the first hand derivation (96 extra bytes) missed the trailing empty c_concat; the model gave 128, and 128 was then re-derived by hand (3 Empty + 1 empty concat). The model had been run on these patterns while the derivations were being written. Fields not listed are not asserted.",
  "cases": [
   {"name": "01_literal_exactly", "pattern": "a{3}", "size_limit": 4096, "budget": 100000,
    "expect": {"pre": {"status": "OK", "c_calls": 4, "insts": 6, "extra_inst_bytes": 0},
