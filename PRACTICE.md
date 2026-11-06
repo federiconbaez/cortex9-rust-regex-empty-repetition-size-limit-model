@@ -1,7 +1,11 @@
 # Guía práctica / Practice guide
 
-Ejercicios **offline**: se cuenta lo que haría el compilador, no se compila
-ningún regex real, no hay servicios y todo bucle tiene presupuesto. *English
+Ejercicios **offline**: se cuenta lo que haría el compilador, sin compilar
+ningún regex real y sin servicios. Cada iteración de los bucles del
+compilador pasa por `c()`, que cuenta contra el presupuesto. El parser no
+cuenta pasos: lo acota el límite de 256 caracteres del patrón. (El chequeo
+opcional `scripts/upstream_check.py` sí compila con los crates reales,
+excepto los casos `MODEL_LIMIT` en 1.5.4.) *English
 summary at the end.*
 
 ## Objetivos
@@ -51,10 +55,14 @@ contra N para `pre` y `fix`. Explica por qué `size_at_stop` de `pre` queda en
 4096 se corta en `pre` con 129 instrucciones y en `fix` con 44 instrucciones
 y 2720 bytes extra.
 
-**Nivel 6 — observación sin validar.** El modelo dice que `(?:|){N}` ya falla
-antes del fix. Escribe qué tendrías que comprobar en el crate real (otras
-compilaciones de `Regex::new`, el parser) para confirmarlo, sin darlo por
-hecho.
+**Nivel 6 — contraste con el crate real.** El modelo dice que `(?:|){N}` ya
+falla antes del fix. Sigue `c_alternate` en `compile.rs` (b92ffd5) y señala
+la línea que añade la instrucción aunque las dos ramas sean vacías. Luego
+lee `review/upstream/hir.tsv` y `compile.tsv`. Comprobación: la HIR de
+`(?:|)` es `Group(NC,Alt(Empty,Empty))` y la fila
+`06_upstream_empty_alt_small_limit pre` es `COMPILED_TOO_BIG` en los dos
+lados. Explica por qué eso no prueba que los recuentos de instrucciones
+coincidan.
 
 **Nivel 7 — defensa propia.** Para un compilador o intérprete propio, añade un
 contador de trabajo (nodos visitados) con límite propio, independiente del
@@ -79,7 +87,10 @@ tamaño del resultado. Escribe un test con una repetición enorme de algo vacío
 
 ## English summary
 
-Offline exercises: only counts, no real regex compiled, every loop budgeted.
+Offline exercises: only counts, no real regex compiled. Every compiler loop
+iteration goes through the counted `c()`. The parser is bounded by the
+256-char pattern limit, and the optional `upstream_check.py` uses the real
+crates.
 Levels:
 
 1. Trace `a{2,4}` by hand.
@@ -87,5 +98,5 @@ Levels:
 3. Derive the thresholds at limit 4096.
 4. Plot the progression.
 5. Derive the empty-alternation case.
-6. Write how you would validate the unvalidated observation.
+6. Trace the `c_alternate` split and read the real-crate check.
 7. Add a work counter to your own compiler.

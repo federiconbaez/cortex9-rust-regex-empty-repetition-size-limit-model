@@ -1,0 +1,17 @@
+case	version	size_limit	real	model	same
+01_literal_exactly	pre	4096	OK	OK	True
+02_literal_bounded	pre	4096	OK	OK	True
+03_small_empty_repetition	pre	4096	OK	OK	True
+06_upstream_empty_alt_small_limit	pre	4096	COMPILED_TOO_BIG	COMPILED_TOO_BIG	True
+11_upstream_empty_alt_default_limit	pre	10485760	COMPILED_TOO_BIG	COMPILED_TOO_BIG	True
+01_literal_exactly	fix	4096	OK	OK	True
+02_literal_bounded	fix	4096	OK	OK	True
+03_small_empty_repetition	fix	4096	OK	OK	True
+04_upstream_big_empty_small_limit	fix	4096	COMPILED_TOO_BIG	COMPILED_TOO_BIG	True
+05_upstream_zero_reps_small_limit	fix	4096	COMPILED_TOO_BIG	COMPILED_TOO_BIG	True
+06_upstream_empty_alt_small_limit	fix	4096	COMPILED_TOO_BIG	COMPILED_TOO_BIG	True
+07_upstream_chain_small_limit	fix	4096	COMPILED_TOO_BIG	COMPILED_TOO_BIG	True
+08_upstream_big_empty_default_limit	fix	10485760	COMPILED_TOO_BIG	COMPILED_TOO_BIG	True
+09_upstream_chain_default_limit	fix	10485760	COMPILED_TOO_BIG	COMPILED_TOO_BIG	True
+10_upstream_zero_reps_default_limit	fix	10485760	COMPILED_TOO_BIG	COMPILED_TOO_BIG	True
+11_upstream_empty_alt_default_limit	fix	10485760	COMPILED_TOO_BIG	COMPILED_TOO_BIG	True

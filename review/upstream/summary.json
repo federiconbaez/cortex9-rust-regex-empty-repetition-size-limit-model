@@ -1,0 +1,7 @@
+{
+ "hir_patterns": 24,
+ "hir_mismatches": 0,
+ "compile_checks": 16,
+ "compile_mismatches": 0,
+ "compile_skipped_model_limit": 6
+}

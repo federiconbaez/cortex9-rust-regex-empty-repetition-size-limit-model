@@ -14,6 +14,8 @@ Local copies under `security-research-45/sources/next/` (not in this repo), read
 | `regex-syntax/src/hir/translate.rs` at b92ffd5 | non-capturing groups kept as `Group` (l.775-789), repetition kinds | 4c595d2faee09aecfdafe5871e7b5b698159d846e3262cf694e6e0a59e8e6a5f |
 | `regex-syntax/src/hir/mod.rs` at b92ffd5 | `Hir::concat` / `Hir::alternation` simplification (l.394, l.487) | 325dc1e42eb8fb9daeb7a8a5e7f967fdee745a7a7c5e26c20dec0b6c66109ad7 |
 | GHSA-m5pq-gvj9-9vr8 (CVE-2022-24713) | description; affected < 1.5.5 | 703b528fbe2f7843ea2888aa1497cad0f99248a11a353b5ca548e05f1eef73ae |
+| crates.io `regex` 1.5.4 and 1.5.5 (via Cargo, `tools/upstream_check/compile_*/Cargo.lock`) | real build status; their `src/compile.rs` hashes equal the b92ffd5 / ae70b41 rows above | 84251b11… / 5c834c21… (compile.rs) |
+| crates.io `regex-syntax` 0.6.25 (`tools/upstream_check/hir_dump/Cargo.lock`) | real HIR; `src/hir/mod.rs` and `src/hir/translate.rs` equal the b92ffd5 copies | 325dc1e4… / 4c595d2f… |
 
 The advisory says the crate "did not properly limit the complexity of the
 regular expressions (regex) it parses". The fix itself is in the compiler

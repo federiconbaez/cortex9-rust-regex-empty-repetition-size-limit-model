@@ -30,9 +30,18 @@ caracteres. Ver [LIMITATIONS.md](LIMITATIONS.md).
 - **Progresión:** con `(?:){N}`, `pre` hace `2N + 1` llamadas y su tamaño
   queda fijo en 96 bytes. `fix` se corta en 655.362 llamadas a partir del
   umbral.
-- **Observación no validada:** en el modelo, `(?:|){N}` ya falla con
-  `COMPILED_TOO_BIG` antes del fix por las instrucciones Split. No se
-  verificó contra el crate real.
+- **`(?:|){N}` antes del fix, contrastado con los crates reales:**
+  - La HIR real es `Group(NonCapturing, Alternation[Empty, Empty])`, no
+    `Empty`.
+  - `c_alternate` hace `push_split_hole()` antes de compilar las ramas, así
+    que cada copia añade una instrucción Split real y `check_size` la ve.
+    Por eso falla también en 1.5.4. No es una contradicción: el test upstream
+    `empty_alt_regex_fails` cubre un caso que ya fallaba.
+  - En `review/upstream/`, la HIR de regex-syntax 0.6.25 coincide con
+    `hir.py` en 24/24 patrones.
+  - El estado de `RegexBuilder::size_limit(..).build()` en regex 1.5.4/1.5.5
+    reales coincide en 16/16. Se omiten en 1.5.4 los 6 casos `MODEL_LIMIT`,
+    y no se comparan los recuentos de instrucciones.
 
 ## Uso
 

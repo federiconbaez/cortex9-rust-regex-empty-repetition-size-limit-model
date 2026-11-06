@@ -62,13 +62,38 @@ For `(?:){N}` with the default 10 MiB limit and N from 10 to 10⁶:
 - `fix` charges 32 bytes per empty. It compiles up to N = 100000, and above
   the threshold it stops after a constant 655,362 calls.
 
-## Model observation that is NOT validated
+## `(?:|){N}` before the fix, checked against the real crates
 
-In this model, `(?:|){N}` already hits `COMPILED_TOO_BIG` **before** the
-fix, because each repetition pushes a Split instruction. If that holds for
-the real crate, the upstream test `empty_alt_regex_fails` would pass on
-1.5.4 too; its own comment calls it "another case for completeness". This
-was not run against the real crate, and is listed only for study.
+In the model, `(?:|){N}` already hits `COMPILED_TOO_BIG` **before** the
+fix. This does not contradict the CVE. `(?:|)` is not an Empty node:
+regex-syntax 0.6.25 gives `Group(NonCapturing, Alternation[Empty, Empty])`.
+
+In 1.5.4 (`compile.rs` at b92ffd5), `c_repeat_range` turns `{N}` into
+`c_concat` over N copies. For each copy, `c_alternate` runs
+`push_split_hole()`, which pushes a `MaybeInst::Split` (l.799-803) **before**
+compiling the branches. Both branches then return `Ok(None)` (l.263), and
+the split's two holes go into the patch (l.544-546, l.556-560).
+
+So every copy adds one real instruction, and `check_size` (l.810-818, called
+at the start of every `c()`) sees the size grow by `size_of::<Inst>()`. With
+limit 4096 it fails at 129 instructions (4128 > 4096). Only *pure* empties
+(`(?:)`, `x{0}`) add nothing in 1.5.4, and those are what `c_empty()` fixes.
+The upstream test `empty_alt_regex_fails` therefore guards a case that
+already failed. Its comment calls it "another case for completeness".
+
+Evidence (`review/upstream/`, regenerate with `scripts/upstream_check.py`;
+needs cargo, not run in CI):
+- **HIR:** for all 24 patterns (the fixtures, the upstream test patterns and
+  extra shapes in `tools/upstream_check/patterns.txt`), the real regex-syntax
+  0.6.25 parser and `hir.py` give the same HIR, repetition kinds included.
+  The crate's `hir/mod.rs` has the same SHA-256 as the copy in SOURCES.
+- **Status:** `RegexBuilder::size_limit(..).build()` was run on the real
+  regex 1.5.4 and 1.5.5 crates. Their `compile.rs` is byte-identical to
+  b92ffd5 and ae70b41. The model's status matches in 16 of 16 runs, including
+  `(?:|){4294967295}` → `CompiledTooBig` on **1.5.4** at both limits.
+- **Skipped on 1.5.4:** the 6 cases where the model reports `MODEL_LIMIT`.
+  Those are the long loops the CVE describes.
+- **Not checked:** only the status is compared, not instruction counts.
 
 ## Usage
 
